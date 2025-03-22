@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { SpotifyStrategy } from './strategies/spotify.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 
 @Module({
@@ -14,7 +15,7 @@ import { SpotifyStrategy } from './strategies/spotify.strategy';
       signOptions: { expiresIn: '1h' }, // Tempo de vida do JWT (1 hora)
     })
   ],
-  providers: [SpotifyStrategy, AuthService],
+  providers: [SpotifyStrategy, JwtStrategy, AuthService],
   controllers: [AuthController]
 })
 export class AuthModule {}
