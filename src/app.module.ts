@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { SpotifyModule } from './spotify/spotify.module';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    SpotifyModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
