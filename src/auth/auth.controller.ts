@@ -1,7 +1,14 @@
 import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
+declare module 'express-session' {
+  interface SessionData {
+    accessToken: string;
+    refreshToken: string;
+  }
+}
 
+@Controller('auth')
 @Controller('auth')
 export class AuthController {
   @Get('spotify')
@@ -11,15 +18,25 @@ export class AuthController {
   @Get('spotify/callback')
   @UseGuards(AuthGuard('spotify'))
   async callback(@Req() req: Request, @Res() res: Response) {
-    // Aqui você pode redirecionar o usuário ou retornar os tokens
+    if (!req.user) {
+      return res.redirect('/auth/spotify'); // Redireciona para iniciar o processo novamente
+    }
+
     const { accessToken, refreshToken } = req.user as any;
 
-    // Redireciona o usuário para outra rota após a autenticação
-    res.redirect(`/auth/profile?accessToken=${accessToken}&refreshToken=${refreshToken}`);
+    // Armazena os tokens na sessão
+    req.session.accessToken = accessToken;
+    req.session.refreshToken = refreshToken;
+
+    // Redireciona o usuário para outra rota
+    res.redirect('/auth/profile');
   }
 
   @Get('profile')
-  async profile(@Query('accessToken') accessToken: string, @Query('refreshToken') refreshToken: string) {
+  async profile(@Req() req: Request) {
+    const accessToken = req.session.accessToken;
+    const refreshToken = req.session.refreshToken;
+
     return { accessToken, refreshToken };
   }
 }
