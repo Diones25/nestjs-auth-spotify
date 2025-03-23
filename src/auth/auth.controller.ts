@@ -9,7 +9,6 @@ declare module 'express-session' {
 }
 
 @Controller('auth')
-@Controller('auth')
 export class AuthController {
   @Get('spotify')
   @UseGuards(AuthGuard('spotify'))
